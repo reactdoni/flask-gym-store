@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="{{url_for('static', filename='orders.css')}}" rel="stylesheet"> 
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container mt-2">
+        <div class="row justify-content-between align-items-center">
+            <div class="col-md-auto">
+                <a href="{{url_for('home')}}"><button class="btn btn-primary" type="submit">Go back</button></a>
+            </div>
+            <div class="col-md-auto">
+                <form class="form-inline" action="{{ url_for('my_orders_search') }}" method="post">
+                    <input class="form-control bg-dark border-0 mr-2" type="search" name="q" placeholder="Search an order">
+                    <button class="btn btn-primary mr-2" type="submit" name="action" value="search">Search</button>
+                    <button class="btn btn-primary" type="submit" name="action" value="reset">Reset</button>                
+                </form>
+            </div>
+        </div>
+    </div>
+
+<div class="container-fluid mt-2">
+    <div class="d-flex justify-content-center row">
+        <div class="col-md-12">
+            <div class="rounded">
+                <div class="table-responsive table-borderless">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="text-center">
+                                    <div class="toggle-btn">
+                                        <div class="inner-circle"></div>
+                                    </div>
+                                </th>
+                                <th>Order#</th>
+                                <th>Products</th>
+                                <th>Status</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Created On</th>
+                                <th>Finished On</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+
+                        {% for order in orders %}
+                            <tbody class="table-body">
+                                <tr class="cell-1">
+                                    <td class="text-center">
+                                        {% if order.order_status == 'Canceled' %}
+                                        <div class="toggle-btn">
+                                        {% else %}
+                                        <div class="toggle-btn active">
+                                        {% endif %}
+                                            <div class="inner-circle"></div>
+                                        </div>
+                                    </td>
+                                    <td>{{order.order_id}}</td>
+                                    <td>{{order.order_name}}</td>
+                                    {% if order.order_status == 'Finished' %}
+                                        <td><span class="badge badge-success">{{ order.order_status }}</span></td>
+                                    {% elif order.order_status == 'Canceled' %}
+                                        <td><span class="badge badge-danger">{{ order.order_status }}</span></td>
+                                    {% else %}
+                                        <td><span class="badge badge-warning">{{ order.order_status }}</span></td>
+                                    {% endif %}
+
+                                    <td style="color:rgb(23, 110, 23)"><strong>€{{order.order_price}}</strong></td>
+                                    <td>{{order.order_quantity}}</td>
+                                    <td>{{order.order_date}}</td>
+
+                                    <td>
+                                        {% if order.order_status == 'Finished' %}
+                                            {{order.order_finish_date}}
+                                        {% else %}
+                                            Not finished
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Pagination -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center mt-4">
+            {% for num in orders.iter_pages() %}
+                {% if num %}
+                    <li class="page-item {% if num == orders.page %}active{% endif %}">
+                        <a class="page-link" href="{{ url_for('my_orders', page=num) }}">{{ num }}</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </nav>
+</div>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+<script src="https://kit.fontawesome.com/f535baba00.js"></script>
+</body>
+</html>

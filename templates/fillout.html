@@ -1,0 +1,239 @@
+<body>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-danger alert-dismissible alert show" role="alert">
+                {{ messages[0] }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="container wrapper">
+            <div class="row cart-head">
+                <div class="container">
+                <div class="row">
+                    <p></p>
+                </div>
+                <div class="row">
+                    <div style="display: table; margin: auto;">
+                        <span class="step step_complete"> <a href="{{url_for('view_cart')}}" class="check-bc">Cart</a> <span class="step_line step_complete"> </span> <span class="step_line backline"> </span> </span>
+                        <span class="step step_complete"> <a href="{{url_for('fillout')}}" class="check-bc">Fill out</a> <span class="step_line "> </span> <span class="step_line step_complete"> </span> </span>
+                        <span class="step_thankyou check-bc step_complete">Thank you</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <p></p>
+                </div>
+                </div>
+            </div>    
+            <div class="row cart-body">
+                <form action="{{ url_for('fillout') }}" class="form-horizontal" method="post">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 col-md-push-6 col-sm-push-6">
+                    <!--REVIEW ORDER-->
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            Review Order <div class="pull-right"><small><a class="afix-1" href="{{url_for('view_cart')}}">Edit Cart</a></small></div>
+                        </div>
+                        <div class="panel-body">
+                            {% for order in cart %}
+                                <div class="form-group">
+                                    <div class="col-sm-3 col-xs-3">
+                                        <img class="img-responsive" src="{{url_for('static', filename=order.image)}}">
+                                    </div>
+                                    <div class="col-sm-6 col-xs-6">
+                                        <div class="col-xs-12">{{order.name}}</div>
+                                        <div class="col-xs-12"><small>Quantity:<span>{{order.quantity}}</span></small></div>
+                                    </div>
+                                    <div class="col-sm-3 col-xs-3 text-right">
+                                        <h4><span>$</span>{{order.price}}</h6>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <br>
+                            {% set ns = namespace(price=0) %}
+                                {% for product in cart %}
+                                    {% set ns.price = ns.price + (product.price*product.quantity) %}
+                                {% endfor %}    
+
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    <strong>Subtotal</strong>
+                                    <div class="pull-right"><span>$</span><span>{{ ns.price }}</span></div>
+                                </div>
+                                <div class="col-xs-12">
+                                    <small>Shipping</small>
+                                    <div class="pull-right"><span>-</span></div>
+                                </div>
+                            </div>
+                            <div class="form-group"><hr /></div>
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    <strong>Order Total</strong>
+                                    <div class="pull-right"><span>$</span><span>{{ ns.price }}</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--REVIEW ORDER END-->
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 col-md-pull-6 col-sm-pull-6">
+                    <!--SHIPPING METHOD-->
+                    <div class="panel panel-info">
+                        <div class="panel-heading">Address</div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <div class="col-md-12"><strong>City:</strong></div>
+                                <div class="col-md-12">
+                                    {% if user.city %}
+                                        <input type="text" name="city" id="city" class="form-control" value={{user.city}} required />
+                                    {% else %}
+                                        <input type="text" name="city" id="city" class="form-control" required />
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12"><strong>Address:</strong></div>
+                                <div class="col-md-12">
+                                    {% if user.address %}
+                                        <input type="text" name="address" id="address" class="form-control" value="{{user.address}}" required />
+                                    {% else %}
+                                        <input type="text" name="address" id="address" class="form-control" required />
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12"><strong>Zip / Postal Code:</strong></div>
+                                <div class="col-md-12"> 
+                                    {% if user.address %}
+                                        <input type="text" name="zip_code" id="zip_code" class="form-control" value="{{user.zip}}" required />
+                                    {% else %}
+                                        <input type="text" name="zip_code" id="zip_code" class="form-control" required />
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12"><strong>Phone Number:</strong></div>
+                                {% if user.address %}
+                                        <div class="col-md-12"><input type="text" name="phone_number" id="phone_number" class="form-control" value="{{user.phone}}" required /></div>
+                                    {% else %}
+                                        <div class="col-md-12"><input type="text" name="phone_number" id="phone_number" class="form-control" required /></div>
+                                    {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <!--SHIPPING METHOD END-->
+                    <!--CREDIT CART PAYMENT-->
+                    <div class="panel panel-info">
+                        <div class="panel-heading"><span><i class="glyphicon glyphicon-lock"></i></span> Secure Payment</div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <div class="col-md-12"><strong>Card Type:</strong></div>
+                                <div class="col-md-12">
+                                    <select id="CreditCardType" name="cardMethod" class="form-control">
+                                        <option value="visa">Visa</option>
+                                        <option value="mastercard">MasterCard</option>
+                                        <option value="delivery">Pay on delivery</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12"><strong>Card Name:</strong></div>
+                                <div class="col-md-12"><input class="form-control mb-3" type="text" id="cardName" name="cardName" required></div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12"><strong>Card Number:</strong></div>
+                                <div class="col-md-12"><input class="form-control mb-3" type="text" id="cardNumber" name="cardNumber" required maxlength="19"></div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12"><strong>Card Expiry Date:</strong></div>
+                                <div class="col-md-12"><input class="form-control mb-3" type="text" placeholder="MM/YYYY" id="expiry-date" required maxlength="7"></div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12"><strong>Card CVV:</strong></div>
+                                <div class="col-md-12"><input class="form-control mb-3 pt-2 " type="password" id="cardCvv" name="cardCvv" placeholder="***" required maxlength="3"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <span>Pay secure using your credit card.</span>
+                                </div>
+                                <div class="col-md-12">
+                                    <ul class="cards">
+                                        <li class="visa hand">Visa</li>
+                                        <li class="mastercard hand">MasterCard</li>
+                                        <li class="amex hand">Amex</li>
+                                    </ul>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <button type="submit" class="btn btn-primary btn-submit-fix">Place Order</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--CREDIT CART PAYMENT END-->
+                </div>
+                </form>
+            </div>
+            <div class="row cart-footer">
+            </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+        const expiryDateInput = document.getElementById('expiry-date');
+        const cardNumberInput = document.getElementById('cardNumber');
+
+        cardNumberInput.addEventListener('input', function(event) {
+            let input = event.target.value;
+
+            // Remove any non-digit characters
+            input = input.replace(/\D/g, '');
+
+            // Insert a space after every 4 characters
+            input = input.replace(/(\d{4})(?=\d)/g, '$1 ');
+
+            // Update the input field with the formatted value
+            event.target.value = input;
+        });
+
+        expiryDateInput.addEventListener('input', function(event) {
+            let input = event.target.value;
+
+            // Remove any non-digits characters
+            input = input.replace(/\D/g, '');
+
+            // Insert a slash after the month (if not already there)
+            if (input.length === 2 && !input.includes('/')) {
+            input = input + '/';
+            }
+
+            // If the slash is removed and there are no digits after it, remove it
+            if (input.length === 2 && input.includes('/')) {
+            input = input.replace('/', '');
+            }
+
+            // If the slash is removed along with the month (e.g., when user deletes),
+            // and there are no digits after it, remove the month too
+            if (input.length === 1 && input === '/') {
+            input = '';
+            }
+
+            // If the slash is removed (e.g., when user types after the year), re-insert it
+            if (input.length > 2 && input.charAt(2) !== '/') {
+            input = input.slice(0, 2) + '/' + input.slice(2);
+            }
+
+            // Update the input field with the formatted value
+            event.target.value = input;
+        });
+    });
+    </script>
+
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='fillout.css')}}">
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script> <!-- Load jQuery first -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script> <!-- Then load Bootstrap's JavaScript -->
+    
+</body>

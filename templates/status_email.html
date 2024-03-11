@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap">
+    <style>
+        body {
+            font-family: 'Roboto Slab', serif; /* Set Roboto Slab as the default font */
+            color: rgb(90, 90, 92);
+            text-align: center;
+        }
+
+        .logo {
+            width: 40%; /* Set image width to 40% of the body's width */
+            height: auto; /* Maintain aspect ratio */
+            display: block; /* Ensure the image behaves as a block-level element */
+            margin: 0 auto; /* Center the image horizontally without any top margin */
+        }
+
+        .container {
+            width: 700px; /* Adjust width as needed */
+            height: 100px; /* Adjust height as needed */
+            margin: 5px auto 0; /* Center the container horizontally and reduce top margin */
+        }
+
+        .blue-container {
+            background-color: blue; /* Set background color to blue */
+        }
+
+        .title {
+            color: white;
+            text-align: center; /* Center-align the text */
+            line-height: 100px; /* Vertically center the text within the container */
+            margin: 0; /* Remove any default margin */
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd; /* Set border bottom for each cell with light grey color */
+            border-color: #ccc; /* Set border color to light grey */
+        }
+
+        th {
+            background-color: #f2f2f2; /* Background color for header cells */
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2; /* Alternate row background color */
+        }
+
+        .total_price {
+            color:green;
+        }
+
+        .finished {
+            color:rgb(112, 201, 112);
+        }
+
+        .canceled {
+            color:red;
+        }
+
+        .processing {
+            color:rgb(226, 170, 65);
+        }
+    </style>
+</head>
+<body>
+    <img src="data:image/png;base64,{{ logo_base64 }}" class="logo">
+
+    <div class="container-wrapper">
+        <div class="container blue-container">
+            {% if status == 'Finished' %}
+                <h1 class="title">Order status has changed to <u class="finished">{{status}}</u></h1>
+            {% elif status == 'Canceled' %}
+                <h1 class="title">Order status has changed to <u class="canceled">{{status}}</u></h1>
+            {% else %}
+                <h1 class="title">Order status has changed to <u class="processing">{{status}}</u></h1>
+            {% endif %}
+        </div>
+        <h2>Hello {{username}}</h2>
+        <div class="container default-container">
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in orders %}
+                        <tr>
+                            <td>{{ product.order_name }}</td>
+                            <td>{{ product.order_quantity }}</td>
+                            <td>{{ product.order_price }}</td>
+                        </tr>
+                    {% endfor %}
+                    <tr>
+                        {% set ns = namespace(total_price=0) %}
+                        {% for product in orders %}
+                            {% set ns.total_price = ns.total_price + (product.order_price * product.order_quantity) %}
+                        {% endfor %}
+                        <td colspan="2"><strong>Total:</strong></td>
+                        <td class="total_price"><strong><b>${{ ns.total_price }}</b></strong></td>
+                    </tr>
+                </tbody>                
+            </table>
+        </div>
+    </div>
+</body>
+</html>

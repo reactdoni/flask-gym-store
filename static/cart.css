@@ -3,28 +3,24 @@ body{
     background-color: #f1f3f7;
 }
 
+.price-tag {
+    margin-top: 125px; /* Adjust the value as needed */
+    font-family: 'Arial', sans-serif;
+    color: rgb(67, 161, 67);
+    font-size: 20px;
+    font-weight: bold;
+    text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.5);
+  }
+
 .avatar-lg {
     height: 5rem;
     width: 5rem;
 }
 
-.font-size-18 {
-    font-size: 18px!important;
+.bg-success {
+    background-color: blue; /* Your desired green color */
 }
 
-.text-truncate {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-a {
-    text-decoration: none!important;
-}
-
-.w-xl {
-    min-width: 160px;
-}
 
 .card {
     margin-bottom: 24px;

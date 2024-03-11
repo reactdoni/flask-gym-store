@@ -30,35 +30,13 @@
                 <a href="{{url_for('home')}}" class="navbar-brand mx-4 mb-3">
                     <h3 class="text-primary"><i class="fa fa-user-edit me-2"></i>Spartan</h3>
                 </a>
-                <div class="d-flex align-items-center ms-4 mb-4">
-                    <div class="position-relative">
-                        <img class="rounded-circle" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
-                        <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
-                    </div>
-                    <div class="ms-3">
-                        <h6 class="mb-0">Jhon Doe</h6>
-                        <span>Admin</span>
-                    </div>
-                </div>
+
                 <div class="navbar-nav w-100">
                     <a href="{{url_for('admin')}}" class="nav-item nav-link active"><i class="fa fa-product-hunt me-2"></i>Products</a>
                     <a href="{{url_for('admin_users')}}" class="nav-item nav-link"><i class="fa fa-user me-2"></i>Users</a>
-
-                <!--
-                    <a href="widget.html" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Widgets</a>
-                    <a href="form.html" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>Forms</a>
-                    <a href="table.html" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Tables</a>
-                    <a href="chart.html" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Charts</a>
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="far fa-file-alt me-2"></i>Pages</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="signin.html" class="dropdown-item">Sign In</a>
-                            <a href="signup.html" class="dropdown-item">Sign Up</a>
-                            <a href="404.html" class="dropdown-item">404 Error</a>
-                            <a href="blank.html" class="dropdown-item">Blank Page</a>
-                        </div>
-                    </div>
-                -->
+                    <a href="{{url_for('admin_categories')}}" class="nav-item nav-link"><i class="fa fa-list me-2"></i>Categories</a>
+                    <a href="{{url_for('admin_suppliers')}}" class="nav-item nav-link"><i class="fa fa-truck-field me-2"></i>Suppliers</a>
+                    <a href="{{url_for('orders')}}" class="nav-item nav-link"><i class="fa fa-briefcase me-2"></i>Orders</a>
                 </div>
             </nav>
         </div>
@@ -72,12 +50,15 @@
                 <a href="index.html" class="navbar-brand d-flex d-lg-none me-4">
                     <h2 class="text-primary mb-0"><i class="fa fa-user-edit"></i></h2>
                 </a>
-                <a href="#" class="sidebar-toggler flex-shrink-0">
-                    <i class="fa fa-bars"></i>
+                <a href="{{url_for('home')}}" class="sidebar-toggler flex-shrink-0">
+                    <i class="fa fa-home"></i>
                 </a>
-                <form class="d-none d-md-flex ms-4">
-                    <input class="form-control bg-dark border-0" type="search" placeholder="Search">
+
+                <form class="d-none d-md-flex ms-4" action="{{ url_for('admin_product_search') }}" method="post">
+                    <input class="form-control bg-dark border-0" type="search" name="q" placeholder="Search a product">
+                    <button class="btn btn-primary" type="submit">Search</button>
                 </form>
+                
                 <div class="navbar-nav align-items-center ms-auto">
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
@@ -143,10 +124,6 @@
                         </div>
                     </div>
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <img class="rounded-circle me-lg-2" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
-                            <span class="d-none d-lg-inline-flex">John Doe</span>
-                        </a>
                         <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
                             <a href="#" class="dropdown-item">My Profile</a>
                             <a href="#" class="dropdown-item">Settings</a>
@@ -158,7 +135,7 @@
             <!-- Navbar End -->
 
             <!-- Available Methods Start -->
-            <div class="container-fluid pt-4">
+            <div class="container-fluid pt-2">
                 <div class="row">
                     <div class="col-12">
                         <button class="btn btn-primary float-right" data-toggle="modal" data-target="#addProductModal">Add more products</button>
@@ -173,6 +150,19 @@
                                 <div class="card-body">
                                     <h5 class="card-title">{{ product.name }}</h5>
                                     <p class="card-text">Price: €{{ product.price }}</p>
+
+                                    {% for category in categories %}
+                                        {% if category.id == product.category_id %}
+                                            <p class="card-text">Category: {{ category.name }}</p>
+                                        {% endif %}
+                                    {% endfor %}
+                    
+                                    {% for supplier in suppliers %}
+                                        {% if supplier.supplier_id == product.supplier_id %}
+                                            <p class="card-text">Supplier: {{ supplier.supplier_name }}</p>
+                                        {% endif %}
+                                    {% endfor %}
+
                                     <!-- Updated the data-target and modal ID dynamically -->
                                     <button class="btn btn-info" data-toggle="modal" data-target="#editProductModal{{ product.id }}">Edit</button>
                                     <button class="btn btn-danger" data-toggle="modal" data-target="#deleteProductModal{{ product.id }}">Delete</button>
@@ -199,6 +189,36 @@
                                                             <!-- Populate the input value with the product price -->
                                                             <input type="text" class="form-control" id="product_price" name="product_price" placeholder="Enter product price (in EUR)" value="{{ product.price }}">
                                                         </div>
+                                                        <div class="form-group">
+                                                            <label for="product_category">Product Category</label>
+                                                            <select class="form-control" id="product_category" name="product_category">
+                                                                {% for category in categories %}
+                                                                    {% if category.id == product.category_id %}
+                                                                        <option value="{{ category.name }}" selected>{{ category.name }}</option>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                                {% for category in categories %}
+                                                                    {% if category.id != product.category_id %}
+                                                                        <option value="{{ category.name }}">{{ category.name }}</option>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="product_supplier">Product Supplier</label>
+                                                            <select class="form-control" id="product_supplier" name="product_supplier">
+                                                                {% for supplier in suppliers %}
+                                                                    {% if supplier.supplier_id == product.supplier_id %}
+                                                                        <option value="{{ supplier.supplier_name }}" selected>{{ supplier.supplier_name }}</option>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                                {% for supplier in suppliers %}
+                                                                    {% if supplier.supplier_id != product.supplier_id %}
+                                                                        <option value="{{ supplier.supplier_name }}">{{ supplier.supplier_name }}</option>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>                                                        
                                                         <div class="form-group">
                                                             <label for="product_image">Product Image</label>
                                                             <input type="file" class="form-control" id="product_image" name="product_image" accept="image/*">
@@ -250,18 +270,34 @@
                         </div>
                         <div class="modal-body">
                             <!-- Add form elements here for adding new products -->
-                            <form class="form-horizontal" action="{{url_for('add_product')}}" role="form" method="post">
+                            <form class="form-horizontal" action="{{url_for('add_product')}}" role="form" method="post" enctype="multipart/form-data">
                                 <div class="form-group">
                                     <label for="product_name">Product Name</label>
                                     <input type="text" class="form-control" id="product_name" name="product_name" placeholder="Enter product name" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="product_price">Product Price</label>
-                                    <input type="text" class="form-control" id="product_price" name="product_price" placeholder="Enter product price (in EUR)" required>
+                                    <input type="number" class="form-control" id="product_price" name="product_price" placeholder="Enter product price (in EUR)" required step="1">
                                 </div>
                                 <div class="form-group">
                                     <label for="product_image">Product Image</label>
                                     <input type="file" class="form-control" id="product_image" name="product_image" accept="image/*" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="product_category">Product Category</label>
+                                    <select class="form-control" id="product_category" name="product_category">
+                                        {% for category in categories %}
+                                            <option value="{{ category.name }}">{{ category.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="product_supplier">Product Supplier</label>
+                                    <select class="form-control" id="product_supplier" name="product_supplier">
+                                        {% for supplier in suppliers %}
+                                            <option value="{{ supplier.supplier_name }}">{{ supplier.supplier_name }}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
                                 <button type="submit" class="btn btn-primary mt-2">Add Product</button>
                             </form>
@@ -271,10 +307,6 @@
             </div>
         </div>
         <!-- Content End -->
-
-
-        <!-- Back to Top -->
-        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
     </div>
 
     <!-- JavaScript Libraries -->

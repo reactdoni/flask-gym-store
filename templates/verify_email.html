@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap">
+    <style>
+        body {
+            font-family: 'Roboto Slab', serif; /* Set Roboto Slab as the default font */
+            color: rgb(81, 81, 83);
+            text-align: center;
+            background-color: #f0f0f0; /* Light grey background color */
+        }
+
+        .logo {
+            width: 50%; /* Set image width to 30% of the body's width */
+            height: auto; /* Maintain aspect ratio */
+            display: block; /* Ensure the image behaves as a block-level element */
+            margin: 5px auto; /* Center the image horizontally with some top margin */
+        }
+
+        .container-wrapper {
+            width: 700px; /* Adjust width as needed */
+            margin: 0 auto 20px; /* Center the container horizontally with some bottom margin */
+            background-color: #ffffff; /* White background color */
+            padding: 20px; /* Add some padding */
+            border-radius: 10px; /* Add border radius for rounded corners */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add box shadow for depth */
+        }
+
+        h2 {
+            margin-bottom: 20px; /* Add some bottom margin to the heading */
+        }
+
+        button {
+            background-color: #419936; /* green button color */
+            color: #ffffff; /* White text color */
+            border: none; /* Remove border */
+            padding: 10px 20px; /* Add some padding */
+            border-radius: 5px; /* Add border radius for rounded corners */
+            cursor: pointer; /* Add pointer cursor on hover */
+            transition: background-color 0.3s; /* Smooth background color transition on hover */
+        }
+
+        button:hover {
+            background-color: #15681c; /* Darker green on hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="container-wrapper">
+        <img src="data:image/png;base64,{{ logo_base64 }}" class="logo">
+        <h2>Password Reset</h2>
+        <div class="container">
+            <b>Use the link below to activate your account.</b>
+            <br>
+            <br>
+            <a href="{{link}}">
+                <button>Verify your e-mail</button>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
